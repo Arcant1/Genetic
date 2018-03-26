@@ -34,7 +34,7 @@ class TrackGenerator : MonoBehaviour
     public static bool PistaCreada;
     public bool isObstaculos;
     public bool isDeforme;
-    public static bool isSeguidorDeLinea = true;
+    public static bool isSeguidorDeLinea = false;
 
     static void imprimir(string a)
     {
@@ -332,8 +332,7 @@ class TrackGenerator : MonoBehaviour
                 checkpoint.transform.localScale = new Vector3(0.1f, checkpoint.transform.localScale.y, ancho);
                 LCH.Add(Instantiate(checkpoint, pared.transform.position, Quaternion.Euler(0, angulosEnGrados[i], 0), this.transform));
             }
-            if ((UnityEngine.Random.value > 0.85f) && !isSeguidorDeLinea)
-            if ((UnityEngine.Random.value > 0.85f)&&!isSeguidorDeLinea)
+            if ((UnityEngine.Random.value > 0.65f) && !isSeguidorDeLinea)
             {
                 powerUp.transform.position = pos;
                 powerUp.transform.rotation = rot;

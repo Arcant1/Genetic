@@ -14,8 +14,8 @@ public class Car : MonoBehaviour
     //Se declaran dos redes reuronales distintas, según el tipo de simulación que se esté llevando a cabo, si la seguidor de linea, o la recolector de powerUps
     // public NeuralNetwork that refers to the next neural network to be set to the next instantiated car
     //La siguiente red neuronal elegida va a ser usada por el siguiente auto
-    public static NeuralNetwork NeuralNetworkSeguidor = new NeuralNetwork(new uint[] { 11, 32, 32, 3 }, null);
-    public static NeuralNetwork NeuralNetworkPowerUps = new NeuralNetwork(new uint[] { 18, 32, 32, 3 }, null);
+    public static NeuralNetwork NeuralNetworkSeguidor = new NeuralNetwork(new uint[] { 11, 16,16, 3 }, null);
+    public static NeuralNetwork NeuralNetworkPowerUps = new NeuralNetwork(new uint[] { 18, 16,16, 3 }, null);
     // public NeuralNetwork that refers to the next neural network to be set to the next instantiated car
 
     public string TheGuid { get; private set; } // The Unique ID of the current car
@@ -82,7 +82,7 @@ public class Car : MonoBehaviour
         NeuralInput[4] = CastRay(transform.right * Mathf.Sin(dir) + transform.forward * Mathf.Cos(dir), Vector3.right * Mathf.Sin(dir) + Vector3.forward * Mathf.Cos(dir), 9) / RayLength;
         NeuralInput[5] = CastRay(transform.right * Mathf.Sin(dir) + -transform.forward * Mathf.Cos(dir), Vector3.right * Mathf.Sin(dir) + -Vector3.forward * Mathf.Cos(dir), 13) / RayLength;
 
-        float dir2 = Mathf.PI / 4;
+        float dir2 = Mathf.PI / 3;
         NeuralInput[6] = CastRay(transform.right * Mathf.Sin(dir2) + transform.forward * Mathf.Cos(dir2), Vector3.right * Mathf.Sin(dir2) + Vector3.forward * Mathf.Cos(dir2), 15) / RayLength;
         NeuralInput[7] = CastRay(transform.right * Mathf.Sin(dir2) + -transform.forward * Mathf.Cos(dir2), Vector3.right * Mathf.Sin(dir2) + -Vector3.forward * Mathf.Cos(dir2), 17) / RayLength;
 
@@ -130,7 +130,7 @@ public class Car : MonoBehaviour
             yield return new WaitForSeconds(2f); // Wait for some time
             if (OldFitness == Fitness) // Check if the fitness didn't change yet
                 WallHit(); // Kill this car
-            else if ((deltaCheck > 1f) || ((Time.time - startTimePow > 0.5f)))
+            else if ((deltaCheck > 1f) || ((Time.time - startTimePow > 2f)))
                 WallHit();
             else if (CantPowerUps == 0)
                 WallHit();
@@ -193,8 +193,8 @@ public class Car : MonoBehaviour
 
 
 
-    const float MAX_FORCE = 50;
-    const float MAX_TURN = 60;
+    const float MAX_FORCE = 15;
+    const float MAX_TURN = 15;
     // The main function that moves the car.
     public void Move(float acelerar, float frenar, float izq)
     {
