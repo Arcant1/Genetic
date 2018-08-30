@@ -14,8 +14,8 @@ public class Car : MonoBehaviour
     //Se declaran dos redes reuronales distintas, según el tipo de simulación que se esté llevando a cabo, si la seguidor de linea, o la recolector de powerUps
     // public NeuralNetwork that refers to the next neural network to be set to the next instantiated car
     //La siguiente red neuronal elegida va a ser usada por el siguiente auto
-    public static NeuralNetwork NeuralNetworkSeguidor = new NeuralNetwork(new uint[] { 11, 16,16, 3 }, null);
-    public static NeuralNetwork NeuralNetworkPowerUps = new NeuralNetwork(new uint[] { 18, 16,16, 3 }, null);
+    public static NeuralNetwork NeuralNetworkSeguidor = new NeuralNetwork(new uint[] { 11, 128, 3 }, null);
+    public static NeuralNetwork NeuralNetworkPowerUps = new NeuralNetwork(new uint[] { 18, 128, 3 }, null);
     // public NeuralNetwork that refers to the next neural network to be set to the next instantiated car
 
     public string TheGuid { get; private set; } // The Unique ID of the current car
@@ -138,7 +138,7 @@ public class Car : MonoBehaviour
         }
     }
     public float RayLength = 6;         // Maximum length of each ray
-    public float RayLength2 = 0.1f;         // Maximum length of each ray
+    public float RayLength2 = 6;         // Maximum length of each ray
 
 
     // Casts a ray and makes it visible through the line renderer
@@ -178,14 +178,14 @@ public class Car : MonoBehaviour
         {
 
             float Dist = Vector3.Distance(Hit.point, transform.position); // Get the distance of the hit in the line
-            float valor = Mathf.Exp(-(Dist * Dist));
+            //float valor = Mathf.Exp(-(Dist * Dist));
             TheLineRenderer.SetPosition(LinePositionIndex, Dist * LineDirection); // Set the position of the line
-            return valor;
+            return Dist;
         }
         else
         {
 
-            return 0; // Return the maximum distance
+            return RayLength2; // Return the maximum distance
         }
     }
 
@@ -193,17 +193,16 @@ public class Car : MonoBehaviour
 
 
 
-    const float MAX_FORCE = 15;
-    const float MAX_TURN = 15;
+    const float MAX_FORCE = 25;
+    const float MAX_TURN = 25;
     // The main function that moves the car.
     public void Move(float acelerar, float frenar, float izq)
     {
-        TheCollider.material.dynamicFriction = frenar;
         float a = MAX_FORCE * acelerar;
         float b = a;
         izq *= MAX_TURN;
         TheRigidbody.angularVelocity = transform.up * izq;
-        TheRigidbody.velocity = -transform.right * b;
+        TheRigidbody.velocity = transform.right * Math.Abs(b);
     }
 
     public float deltaCheck = 0;
@@ -233,7 +232,7 @@ public class Car : MonoBehaviour
         deltaPowerUp = Time.time - startTimePow;
         startTimePow = Time.time;
 
-        Fitness += 30 + 5 * Mathf.Exp(-(deltaPowerUp * deltaPowerUp));
+        Fitness += 30;
     }
 
 

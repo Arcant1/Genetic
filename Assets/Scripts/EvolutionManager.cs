@@ -105,6 +105,7 @@ public class EvolutionManager : MonoBehaviour
                 }
             }
         }
+        UnityEngine.Debug.Log("Generacion: "+ GenerationCount.ToString() + "   Fitness: " + BestFitness.ToString()+ "   MaxPowerUps: " + Car.MaxCantPowerUps.ToString());
     }
 
     // Gets called by cars when they die

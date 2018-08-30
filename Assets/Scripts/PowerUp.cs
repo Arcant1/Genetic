@@ -17,7 +17,8 @@ public class PowerUp : MonoBehaviour
             {
                 AllGuids.Add(CarGuid);
                 CarComponent.PowerUpHit();
-                
+                //gameObject.SetActive(false); // Make sure the pwoerup is inactive
+
             }
         }
     }

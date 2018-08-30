@@ -21,9 +21,9 @@ public class NeuralNetwork
 
     Random TheRandomizer; // It is the Random instance used to mutate the NeuralNetwork
 
-    public class NeuralSection
+    private class NeuralSection
     {
-        public float[][] Weights; // Contains all the weights of the section where [i][j] represents the weight from neuron i in the input layer and neuron j in the output layer
+        private float[][] Weights; // Contains all the weights of the section where [i][j] represents the weight from neuron i in the input layer and neuron j in the output layer
 
         private Random TheRandomizer; // Contains a reference to the Random instance of the NeuralNetwork
 
@@ -83,34 +83,6 @@ public class NeuralNetwork
             }
         }
 
-        private static void swap(ref float[] f1, ref float[] f2)
-        {
-            float[] aux = f1;
-            f1 = f2;
-            f2 = aux;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="n1"></param>
-        /// <param name="n2"></param>
-        public static void CrossOver(ref NeuralSection n1, ref NeuralSection n2)
-        {
-            System.Random r = new Random();
-            int ran1 = r.Next(1, n1.Weights.Length - 1);
-            int ran2 = r.Next(ran1, n1.Weights.Length - 1);
-
-            for (int i = 0; i < ran1; i++)
-            {
-                swap(ref n1.Weights[i], ref n2.Weights[i]);
-            }
-            for (int i = ran2 + 1; i < n2.Weights.Length; i++)
-            {
-                swap(ref n1.Weights[i], ref n2.Weights[i]);
-            }
-        }
-
         /// <summary>
         /// Feed input through the NeuralSection and get the output.
         /// </summary>
@@ -141,31 +113,11 @@ public class NeuralNetwork
 
             // Apply Activation Function
 
-            Output[0] = UnityEngine.Mathf.Atan(Output[0]);     //acelerar
-            Output[1] = Lin2(Output[1], 10);                                //frenar
-            Output[2] = UnityEngine.Mathf.Atan(Output[2]);     //doblar
-
-
-
+            for (int i = 0; i < Output.Length; i++)
+                Output[i] = Convert.ToSingle(Math.Tanh((double)Output[i]));
+                //Output[i] = ReLU(Output[i]);
             // Return Output
             return Output;
-        }
-
-        public float step(float f)
-        {
-            return (f > 0) ? 1 : -1;
-        }
-
-        public float Lin2(float f, float a)
-        {
-            if (f > 0)
-                return f * a;
-            else return -f * a;
-        }
-
-        public float Lin(float f, float a)
-        {
-            return f * a;
         }
 
         /// <summary>
@@ -173,14 +125,19 @@ public class NeuralNetwork
         /// </summary>
         /// <param name="MutationProbablity">The probability that a weight is going to be mutated. (Ranges 0-1)</param>
         /// <param name="MutationAmount">The maximum amount a Mutated Weight would change.</param>
+        /// UnityEngine.Random.value
+        /// 
+
         public void Mutate(float MutationProbablity, float MutationAmount)
         {
-            for (int i = 0; i < Weights.Length; i++)
+            for (int j = 0; j < Weights[0].Length; j++) // For each output node
             {
-                for (int j = 0; j < Weights[i].Length; j++)
+                if (UnityEngine.Random.value < MutationProbablity) // Check if we are going to mutate this node
                 {
-                    if (UnityEngine.Random.value < MutationProbablity)
-                        Weights[i][j] = UnityEngine.Random.value * (MutationAmount * 2) - MutationAmount;
+                    for (int i = 0; i < Weights.Length; i++) // For each input node connected to the current output node
+                    {
+                        Weights[i][j] = UnityEngine.Random.value * (MutationAmount * 2) - MutationAmount; // Mutate the weight connecting both nodes
+                    }
                 }
             }
         }
@@ -195,7 +152,7 @@ public class NeuralNetwork
             if (x >= 0)
                 return x;
             else
-                return -x / 40;
+                return x / 20;
         }
     }
 
@@ -281,22 +238,12 @@ public class NeuralNetwork
         return Output;
     }
 
-
-    public void CrossOver(ref NeuralNetwork n1, ref NeuralNetwork n2)
-    {
-        for (int i = 0; i < n1.Sections.Length; i++)
-            NeuralSection.CrossOver(ref n1.Sections[i], ref n2.Sections[i]);
-    }
-
-
-
-
     /// <summary>
     /// Mutate the NeuralNetwork.
     /// </summary>
     /// <param name="MutationProbablity">The probability that a weight is going to be mutated. (Ranges 0-1)</param>
     /// <param name="MutationAmount">The maximum amount a mutated weight would change.</param>
-    public void Mutate(float MutationProbablity, float MutationAmount)
+    public void Mutate(float MutationProbablity = 0.3f, float MutationAmount = 2f)
     {
         // Mutate each section
         for (int i = 0; i < Sections.Length; i++)
